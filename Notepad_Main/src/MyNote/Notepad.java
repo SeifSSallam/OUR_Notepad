@@ -1,6 +1,7 @@
 package MyNote;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -234,7 +235,7 @@ class FileOperation {
 	}
 
 ///////////////////////////////////////
-	void newFile() {
+	void newFile1() {                   //new ordinary txt file
 		if (!confirmSave())
 			return;
 
@@ -245,6 +246,82 @@ class FileOperation {
 		newFileFlag = true;
 		this.npd.f.setTitle(fileName + " - " + applicationTitle);
 	}
+//////////////////////////////////////
+
+void newFile2() {                   //new C file
+	if (!confirmSave())
+		return;
+
+	this.npd.ta.setText("#include <stdio.h>\n"
+			+ "\n"
+			+ "int main()\n"
+			+ "{\n"
+			+ "    printf(\"Hello World\");\n"
+			+ "\n"
+			+ "    return 0;\n"
+			+ "}\n");
+	fileName = new String("Untitled");
+	fileRef = new File(fileName);
+	saved = true;
+	newFileFlag = true;
+	this.npd.f.setTitle(fileName + " - " + applicationTitle);
+}
+
+void newFile3() {                   //new C++ file
+	if (!confirmSave())
+		return;
+
+	this.npd.ta.setText("#include <stdio.h>\n"
+			+ "#include <bits/stdc++.h>\n"
+			+ "\n"
+			+ "using namespace std;\n"
+			+ "\n"
+			+ "int main()\n"
+			+ "{\n"
+			+ "    cout << \"Hello World\\n\";\n"
+			+ "\n"
+			+ "    return 0;\n"
+			+ "}");
+	fileName = new String("Untitled");
+	fileRef = new File(fileName);
+	saved = true;
+	newFileFlag = true;
+	this.npd.f.setTitle(fileName + " - " + applicationTitle);
+}
+
+void newFile4() {                   //new JAVA file
+	if (!confirmSave())
+		return;
+
+	this.npd.ta.setText("public class Main\n"
+			+ "{\n"
+			+ "	public static void main(String[] args) {\n"
+			+ "		System.out.println(\"Hello World\");\n"
+			+ "	}\n"
+			+ "}\n");
+	fileName = new String("Untitled");
+	fileRef = new File(fileName);
+	saved = true;
+	newFileFlag = true;
+	this.npd.f.setTitle(fileName + " - " + applicationTitle);
+}
+
+void newFile5() {                   //new HTML,JS,CSS file
+	if (!confirmSave())
+		return;
+
+	this.npd.ta.setText("<html>\n"
+			+ "<body>\n"
+			+ "<h1>Hello World</h1>\n"
+			+ "</body>\n"
+			+ "</html>");
+	fileName = new String("Untitled");
+	fileRef = new File(fileName);
+	saved = true;
+	newFileFlag = true;
+	this.npd.f.setTitle(fileName + " - " + applicationTitle);
+}
+
 //////////////////////////////////////
 }// end defination of class FileOperation
 
@@ -373,8 +450,16 @@ public class Notepad implements ActionListener, MenuConstants {
 	public void actionPerformed(ActionEvent ev) {
 		String cmdText = ev.getActionCommand();
 ////////////////////////////////////
-		if (cmdText.equals(fileNew))
-			fileHandler.newFile();
+		if (cmdText.equals(fileP))
+			fileHandler.newFile1();
+		else if (cmdText.equals(fileC))
+			fileHandler.newFile2();
+		if (cmdText.equals(fileCC))
+			fileHandler.newFile3();
+		if (cmdText.equals(fileJava))
+			fileHandler.newFile4();
+		if (cmdText.equals(fileHtml))
+			fileHandler.newFile5();
 		else if (cmdText.equals(fileOpen))
 			fileHandler.openFile();
 ////////////////////////////////////
@@ -456,10 +541,22 @@ public class Notepad implements ActionListener, MenuConstants {
 		else if (cmdText.equals(editSelectAll))
 			ta.selectAll();
 ////////////////////////////////////
-		else if (cmdText.equals(editTimeDate))
+		else if (cmdText.equals(defTime))
 			ta.insert(new Date().toString(), ta.getSelectionStart());
+		else if (cmdText.equals(dayMonth)) {
+			
+			Date date = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+			
+			ta.insert(formatter.format(date), ta.getSelectionStart());
+		}else if (cmdText.equals(monthDay)) {
+			
+			Date date = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+			
+			ta.insert(formatter.format(date), ta.getSelectionStart());
 ////////////////////////////////////
-		else if (cmdText.equals(formatWordWrap)) {
+		}else if (cmdText.equals(formatWordWrap)) {
 			JCheckBoxMenuItem temp = (JCheckBoxMenuItem) ev.getSource();
 			ta.setLineWrap(temp.isSelected());
 		}
@@ -572,6 +669,13 @@ public class Notepad implements ActionListener, MenuConstants {
 		toMenuBar.add(temp);
 		return temp;
 	}
+	
+	JMenu createSubMenu(String s , int key , JMenu parentMenu) {
+		JMenu temp = new JMenu(s);
+		temp.setMnemonic(key);
+		parentMenu.add(temp);
+		return temp;
+	}
 
 	/*********************************/
 	void createMenuBar(JFrame f) {
@@ -583,8 +687,19 @@ public class Notepad implements ActionListener, MenuConstants {
 		JMenu formatMenu = createMenu(formatText, KeyEvent.VK_O, mb);
 		JMenu viewMenu = createMenu(viewText, KeyEvent.VK_V, mb);
 		JMenu helpMenu = createMenu(helpText, KeyEvent.VK_H, mb);
-
-		createMenuItem(fileNew, KeyEvent.VK_N, fileMenu, KeyEvent.VK_N, this);
+		
+		////////////////////////////////
+		
+		JMenu newSubMenu = createSubMenu(fileNew, KeyEvent.VK_F, fileMenu);
+		
+		createMenuItem(fileP , KeyEvent.VK_N, newSubMenu, KeyEvent.VK_N, this);
+		createMenuItem(fileC, KeyEvent.VK_Q, newSubMenu, KeyEvent.VK_Q, this);
+		createMenuItem(fileCC, KeyEvent.VK_W, newSubMenu, KeyEvent.VK_W, this);
+		createMenuItem(fileJava, KeyEvent.VK_E, newSubMenu, KeyEvent.VK_E, this);
+		createMenuItem(fileHtml, KeyEvent.VK_R, newSubMenu, KeyEvent.VK_R, this);
+		
+		////////////////////////////////////////
+		
 		createMenuItem(fileOpen, KeyEvent.VK_O, fileMenu, KeyEvent.VK_O, this);
 		createMenuItem(fileSave, KeyEvent.VK_S, fileMenu, KeyEvent.VK_S, this);
 		createMenuItem(fileSaveAs, KeyEvent.VK_A, fileMenu, this);
@@ -614,8 +729,16 @@ public class Notepad implements ActionListener, MenuConstants {
 		gotoItem = createMenuItem(editGoTo, KeyEvent.VK_G, editMenu, KeyEvent.VK_G, this);
 		editMenu.addSeparator();
 		selectAllItem = createMenuItem(editSelectAll, KeyEvent.VK_A, editMenu, KeyEvent.VK_A, this);
-		createMenuItem(editTimeDate, KeyEvent.VK_D, editMenu, this)
-				.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+		
+		////////////////////////////////////////////////////////////
+		
+		JMenu timeSubMenu = createSubMenu(editTimeDate, KeyEvent.VK_F, editMenu);
+		
+		createMenuItem(defTime , KeyEvent.VK_N, timeSubMenu, this);
+		createMenuItem(dayMonth , KeyEvent.VK_N, timeSubMenu, this);
+		createMenuItem(monthDay , KeyEvent.VK_N, timeSubMenu, this);
+		
+		///////////////////////////////////////////////////////////////
 
 		createCheckBoxMenuItem(formatWordWrap, KeyEvent.VK_W, formatMenu, this);
 
@@ -689,6 +812,17 @@ interface MenuConstants {
 	final String helpText = "Help";
 
 	final String fileNew = "New";
+	
+	///////////////////////////////////
+	
+	final String fileP = "Pad";
+	final String fileC = "C";
+	final String fileCC = "C++";
+	final String fileJava = "JAVA";
+	final String fileHtml = "HTML,JS,CSS";
+	
+	//////////////////////////////////
+	
 	final String fileOpen = "Open...";
 	final String fileSave = "Save";
 	final String fileSaveAs = "Save As...";
@@ -709,6 +843,14 @@ interface MenuConstants {
 	final String editGoTo = "Go To...";
 	final String editSelectAll = "Select All";
 	final String editTimeDate = "Time/Date";
+	
+	/////////////////////////////////
+	
+	final String defTime = "Default";
+	final String dayMonth = "DD/MM/YYY";
+	final String monthDay = "MM/DD/YYY";
+	
+	/////////////////////////////////
 
 	final String formatWordWrap = "Word Wrap";
 	final String formatFont = "Font...";
